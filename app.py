@@ -8,6 +8,10 @@ from datetime import datetime
 st.set_page_config(page_title="Performance Fitness Coach", page_icon=":muscle:")
 st.title("Performance Fitness – Dein AI-Fitness-Coach für Anfänger")
 
+# Session State vorbereiten
+if "antwort" not in st.session_state:
+    st.session_state["antwort"] = ""
+
 # Zugriff auf OpenAI API Key
 openai_api_key = st.secrets["openai"]["api_key"]
 client = openai.OpenAI(api_key=openai_api_key)
@@ -15,7 +19,6 @@ client = openai.OpenAI(api_key=openai_api_key)
 ziel = st.selectbox("Was ist dein Ziel?", ["Muskelaufbau", "Abnehmen", "Fit bleiben", "Reha"])
 frage = st.text_area("Stell deinem Coach eine Frage:", "Ich bin Anfänger und will zu Hause Muskeln aufbauen. Was soll ich tun?")
 
-antwort = ""
 if st.button("Coach fragen"):
     with st.spinner("Der Coach überlegt..."):
         system_prompt = f"Du bist ein motivierender Fitness-Coach. Dein Ziel ist es, Anfängern beim Thema '{ziel}' einfache Tipps und Trainingspläne zu geben. Du sprichst locker und motivierend – wie ein echter Trainer im Studio."
@@ -26,12 +29,13 @@ if st.button("Coach fragen"):
                 {"role": "user", "content": frage}
             ]
         )
-        antwort = chat.choices[0].message.content
-        st.success("Antwort vom Coach:")
-        st.write(antwort)
+        st.session_state["antwort"] = chat.choices[0].message.content
 
-# Nur anzeigen, wenn eine Antwort generiert wurde
-if antwort:
+# Coach-Antwort anzeigen, wenn vorhanden
+if st.session_state["antwort"]:
+    st.success("Antwort vom Coach:")
+    st.write(st.session_state["antwort"])
+
     st.markdown("---")
     st.header("📩 Willst du deinen persönlichen Plan per E-Mail?")
 
