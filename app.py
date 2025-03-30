@@ -52,8 +52,15 @@ if antwort:
                 # Tabelle öffnen und Daten speichern
                 sheet = sheet_client.open("Fitness Leads").sheet1
                 now = datetime.now().strftime("%d.%m.%Y %H:%M")
-                sheet.append_row([name, email, telefon, now])
+                st.info(f"⏺️ Testdaten: {name}, {email}, {telefon}, {now}")
 
-                st.success("✅ Deine Anfrage wurde gespeichert!")
-            except Exception as e:
-                st.error(f"Fehler beim Speichern: {e}")
+                try:
+                    sheet.append_row([name, email, telefon, now])
+                    st.success("✅ Deine Anfrage wurde gespeichert!")
+                except Exception as e:
+                    st.error("❌ Fehler beim Schreiben in Google Sheets:")
+                    st.code(str(e))
+
+            except Exception as conn_error:
+                st.error("❌ Verbindung zu Google Sheets fehlgeschlagen!")
+                st.code(str(conn_error))
