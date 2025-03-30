@@ -16,12 +16,13 @@ if st.button("Coach fragen"):
         system_prompt = f"Du bist ein motivierender Fitness-Coach. Dein Ziel ist es, Anfängern beim Thema '{ziel}' einfache Tipps und Trainingspläne zu geben. Du sprichst locker und motivierend – wie ein echter Trainer im Studio."
 
         chat = client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": frage}
-            ]
-        )
+    model="gpt-3.5-turbo",  # <-- Ändere das hier!
+    messages=[
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": frage}
+    ]
+)
+
 
         antwort = chat.choices[0].message.content
         st.success("Antwort vom Coach:")
