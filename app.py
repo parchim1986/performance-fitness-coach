@@ -3,6 +3,7 @@ import streamlit as st
 import openai
 import gspread
 from datetime import datetime
+from google.oauth2 import service_account
 
 st.set_page_config(page_title="Performance Fitness Coach", page_icon=":muscle:")
 st.title("Performance Fitness – Dein AI-Fitness-Coach für Anfänger")
@@ -47,7 +48,9 @@ if st.session_state["antwort"]:
     if st.button("Absenden") and name and email and phone and consent:
         try:
             creds_dict = st.secrets["gcp"]
-            client = gspread.service_account_from_dict(creds_dict)
+            credentials = service_account.Credentials.from_service_account_info(creds_dict)
+            client = gspread.Client(auth=credentials)
+            client.session = gspread.httpsession.HTTPSession(credentials)
             sheet = client.open("Fitness Leads").sheet1
             timestamp = datetime.now().strftime("%d.%m.%Y %H:%M")
             sheet.append_row([name, email, phone, timestamp])
