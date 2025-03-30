@@ -2,7 +2,6 @@
 import streamlit as st
 import openai
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
 st.set_page_config(page_title="Performance Fitness Coach", page_icon=":muscle:")
@@ -47,10 +46,8 @@ if st.session_state["antwort"]:
 
     if st.button("Absenden") and name and email and phone and consent:
         try:
-            scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
             creds_dict = st.secrets["gcp"]
-            creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-            client = gspread.authorize(creds)
+            client = gspread.service_account_from_dict(creds_dict)
             sheet = client.open("Fitness Leads").sheet1
             timestamp = datetime.now().strftime("%d.%m.%Y %H:%M")
             sheet.append_row([name, email, phone, timestamp])
