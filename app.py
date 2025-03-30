@@ -1,4 +1,3 @@
-
 import streamlit as st
 import openai
 import gspread
@@ -58,35 +57,3 @@ if antwort:
                 st.success("✅ Deine Anfrage wurde gespeichert!")
             except Exception as e:
                 st.error(f"Fehler beim Speichern: {e}")
-            ]
-        )
-        st.session_state["antwort"] = chat.choices[0].message.content
-
-# Coach-Antwort anzeigen, wenn vorhanden
-if st.session_state["antwort"]:
-    st.success("Antwort vom Coach:")
-    st.write(st.session_state["antwort"])
-
-    st.markdown("---")
-    st.header("📩 Willst du deinen persönlichen Plan per E-Mail?")
-
-    # Leadformular
-    name = st.text_input("Dein Name")
-    email = st.text_input("Deine E-Mail")
-    phone = st.text_input("Deine Telefonnummer")
-    consent = st.checkbox("Ich bin einverstanden, dass meine Daten zur Kontaktaufnahme verwendet werden.")
-
-    if st.button("Absenden") and name and email and phone and consent:
-        try:
-            creds_dict = st.secrets["gcp"]
-            credentials = service_account.Credentials.from_service_account_info(creds_dict)
-            client = gspread.Client(auth=credentials)
-            client.session = gspread.httpsession.HTTPSession(credentials)
-            sheet = client.open("Fitness Leads").sheet1
-            timestamp = datetime.now().strftime("%d.%m.%Y %H:%M")
-            sheet.append_row([name, email, phone, timestamp])
-            st.success("✅ Danke! Wir melden uns bald bei dir.")
-        except Exception as e:
-            st.error(f"Fehler beim Speichern: {e}")
-
-    st.markdown("Deine Daten werden vertraulich behandelt und nicht an Dritte weitergegeben.")
