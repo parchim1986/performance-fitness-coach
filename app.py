@@ -55,11 +55,14 @@ if antwort:
                 st.info(f"⏺️ Testdaten: {name}, {email}, {telefon}, {now}")
 
                 try:
-                    sheet.append_row([name, email, telefon, now])
-                    st.success("✅ Deine Anfrage wurde gespeichert!")
-                except Exception as e:
-                    st.error("❌ Fehler beim Schreiben in Google Sheets:")
-                    st.code(str(e))
+    sheet_names = sheet_client.openall()
+    st.write("✅ Tabellen gefunden:")
+    for s in sheet_names:
+        st.write("-", s.title)
+except Exception as e:
+    st.error("❌ Konnte keine Tabellen finden")
+    st.code(str(e))
+
 
             except Exception as conn_error:
                 st.error("❌ Verbindung zu Google Sheets fehlgeschlagen!")
